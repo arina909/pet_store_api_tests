@@ -1,5 +1,4 @@
 import logging
-from typing import Tuple
 
 import allure
 import requests
@@ -7,13 +6,14 @@ from requests import Response
 
 from sections.base import Base, BASE_URL
 
-CREATE_USER_WITH_LIST = BASE_URL.format('/user/createWithList')
-LOGIN_USER = BASE_URL.format('/user/login')
-OPERATE_WITH_USER = BASE_URL.format('/user/{}')
+CREATE_USER_WITH_LIST = 'createWithList'
+LOGIN_USER = 'login'
 
 
 class User(Base):
     """User section related methods"""
+    def __init__(self):
+        self.url = BASE_URL.format('/user/{}')
 
     @staticmethod
     def _configurate_user_request_body(user_id: int,
@@ -49,19 +49,20 @@ class User(Base):
         logging.info('Creating a new user')
         request_body = self._configurate_user_request_body(user_id, username, first_name, last_name,
                                                            email, password, phone, user_status)
-        return requests.post(CREATE_USER_WITH_LIST, json=[request_body])
+        return requests.post(self.url.format(CREATE_USER_WITH_LIST), json=[request_body])
 
     @allure.step('Log in user into the system')
     def log_in_user(self,
                     username: str,
                     password: str) -> Response:
         logging.info('Logging in user into the system')
-        return requests.get(LOGIN_USER, params={'username': username, 'password': password})
+        return requests.get(self.url.format(LOGIN_USER),
+                            params={'username': username, 'password': password})
 
     @allure.step('Delete user')
     def delete_user(self, username: str) -> Response:
         logging.info('Deleting user from the system')
-        return requests.delete(OPERATE_WITH_USER.format(username))
+        return requests.delete(self.url.format(username))
 
     @allure.step('Change user info')
     def change_user_info(self,
@@ -76,9 +77,9 @@ class User(Base):
         logging.info('Changing user info in the system')
         request_body = self._configurate_user_request_body(user_id, username, first_name, last_name,
                                                            email, password, phone, user_status)
-        return request_body, requests.put(OPERATE_WITH_USER.format(username), json=request_body)
+        return request_body, requests.put(self.url.format(username), json=request_body)
 
     @allure.step('Get user info')
     def get_user_info(self, username: str):
         logging.info('Getting user info from the system')
-        return requests.get(OPERATE_WITH_USER.format(username))
+        return requests.get(self.url.format(username))

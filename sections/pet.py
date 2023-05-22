@@ -6,8 +6,7 @@ from requests import Response
 
 from sections.base import Base, BASE_URL
 
-FIND_PETS_BY_STATUS = BASE_URL.format('/pet/findByStatus/')
-FIND_PETS_BY_ID = BASE_URL.format('/pet/{}')
+FIND_PETS_BY_STATUS = 'findByStatus/'
 
 
 class PetStatus(Enum):
@@ -19,12 +18,14 @@ class PetStatus(Enum):
 
 class Pet(Base):
     """Pet section related methods"""
+    def __init__(self):
+        self.url = BASE_URL.format('/pet/{}')
 
     @allure.step('Find pets by status')
     def find_pets_by_status(self, status: PetStatus) -> Response:
         logging.info('Finding pets by status')
         request_params = {'status': status.value}
-        return requests.get(FIND_PETS_BY_STATUS, params=request_params)
+        return requests.get(self.url.format(FIND_PETS_BY_STATUS), params=request_params)
 
     @allure.step('Check pets only with requested status are shown')
     def check_pets_only_with_requested_status_shown(self,
@@ -38,4 +39,4 @@ class Pet(Base):
     @allure.step('Find pet by id')
     def find_pet_by_id(self, pet_id: int | str) -> Response:
         logging.info('Finding pets by id')
-        return requests.get(FIND_PETS_BY_ID.format(pet_id))
+        return requests.get(self.url.format(pet_id))
