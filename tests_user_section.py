@@ -34,7 +34,7 @@ def test_delete_user_request_cant_performed_twice():
 
 
 @allure.description('Test checks that user info is changed after performed changes')
-def test_delete_user_by_not_logged_in_user():
+def test_user_info_changed_after_changes():
     (user := User()).create_user(**NEW_USER)
     user.log_in_user(NEW_USER['username'], NEW_USER['password'])
     updated_user_info, response = user.change_user_info(**UPDATED_USER)
