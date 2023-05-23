@@ -1,4 +1,4 @@
-import logging
+from logger import logger
 from enum import Enum
 
 import allure
@@ -18,10 +18,10 @@ class Base:
 
     @allure.step('Check response status code value')
     def check_response_status_code(self, response: Response, expected: ResponseStatusCode):
-        logging.info('Checking response status code value')
+        logger.info('Checking response status code value')
         assert response.status_code == expected.value
 
     @allure.step('Checking response body')
     def check_response_body(self, response: Response, expected: dict):
-        logging.info('Checking response boby')
+        logger.info('Checking response boby')
         assert response.json() == expected

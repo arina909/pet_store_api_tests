@@ -1,4 +1,4 @@
-import logging
+from logger import logger
 
 import allure
 import requests
@@ -46,7 +46,7 @@ class User(Base):
                     password: str,
                     phone: str,
                     user_status: int) -> Response:
-        logging.info('Creating a new user')
+        logger.info('Creating a new user')
         request_body = self._configurate_user_request_body(user_id, username, first_name, last_name,
                                                            email, password, phone, user_status)
         return requests.post(self.url.format(CREATE_USER_WITH_LIST), json=[request_body])
@@ -55,13 +55,13 @@ class User(Base):
     def log_in_user(self,
                     username: str,
                     password: str) -> Response:
-        logging.info('Logging in user into the system')
+        logger.info('Logging in user into the system')
         return requests.get(self.url.format(LOGIN_USER),
                             params={'username': username, 'password': password})
 
     @allure.step('Delete user')
     def delete_user(self, username: str) -> Response:
-        logging.info('Deleting user from the system')
+        logger.info('Deleting user from the system')
         return requests.delete(self.url.format(username))
 
     @allure.step('Change user info')
@@ -74,12 +74,12 @@ class User(Base):
                          password: str,
                          phone: str,
                          user_status: int) -> tuple[dict, Response]:
-        logging.info('Changing user info in the system')
+        logger.info('Changing user info in the system')
         request_body = self._configurate_user_request_body(user_id, username, first_name, last_name,
                                                            email, password, phone, user_status)
         return request_body, requests.put(self.url.format(username), json=request_body)
 
     @allure.step('Get user info')
     def get_user_info(self, username: str):
-        logging.info('Getting user info from the system')
+        logger.info('Getting user info from the system')
         return requests.get(self.url.format(username))

@@ -1,5 +1,5 @@
 from enum import Enum
-import logging
+from logger import logger
 import allure
 import requests
 from requests import Response
@@ -23,7 +23,7 @@ class Pet(Base):
 
     @allure.step('Find pets by status')
     def find_pets_by_status(self, status: PetStatus) -> Response:
-        logging.info('Finding pets by status')
+        logger.info('Finding pets by status')
         request_params = {'status': status.value}
         return requests.get(self.url.format(FIND_PETS_BY_STATUS), params=request_params)
 
@@ -31,12 +31,12 @@ class Pet(Base):
     def check_pets_only_with_requested_status_shown(self,
                                                     response: Response,
                                                     status: PetStatus) -> None:
-        logging.info('Checking if pets only with requested status are shown')
+        logger.info('Checking if pets only with requested status are shown')
         if response.json():  # could be empty if there are no pets with requested status
             for pet_info in response.json():
                 assert pet_info['status'] == status.value
 
     @allure.step('Find pet by id')
     def find_pet_by_id(self, pet_id: int | str) -> Response:
-        logging.info('Finding pets by id')
+        logger.info('Finding pets by id')
         return requests.get(self.url.format(pet_id))
